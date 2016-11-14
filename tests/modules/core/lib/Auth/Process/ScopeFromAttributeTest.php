@@ -90,8 +90,7 @@ class ScopeFromAttributeTest extends TestCase
 
 
     /**
-     * When multiple @ signs in attribute, should use last one.
-     * @return void
+     * When multiple @ signs in attribute, should use first one.
      */
     public function testMultiAt()
     {
