@@ -14,6 +14,7 @@ use Gettext\BaseTranslator;
 use SimpleSAML\Configuration;
 use SimpleSAML\Logger;
 use SimpleSAML\Module;
+use Webmozart\Assert\Assert;
 
 class Translate
 {
@@ -99,7 +100,7 @@ class Translate
      */
     private function getDictionary($name)
     {
-        assert(is_string($name));
+        Assert::string($name);
 
         if (!array_key_exists($name, $this->dictionaries)) {
             $sepPos = strpos($name, ':');
@@ -128,7 +129,7 @@ class Translate
      */
     public function getTag($tag)
     {
-        assert(is_string($tag));
+        Assert::string($tag);
 
         // first check translations loaded by the includeInlineTranslation and includeLanguageFile methods
         if (array_key_exists($tag, $this->langtext)) {
@@ -166,7 +167,7 @@ class Translate
      */
     public function getPreferredTranslation($translations)
     {
-        assert(is_array($translations));
+        Assert::isArray($translations);
 
         // look up translation of tag in the selected language
         $selected_language = $this->language->getLanguage();
@@ -406,8 +407,13 @@ class Translate
      */
     private function readDictionaryJSON($filename)
     {
+<<<<<<< HEAD
         $definitionFile = $filename . '.definition.json';
         assert(file_exists($definitionFile));
+=======
+        $definitionFile = $filename.'.definition.json';
+        Assert::true(file_exists($definitionFile));
+>>>>>>> Migrate assertions to Webmozart
 
         $fileContent = file_get_contents($definitionFile);
         $lang = json_decode($fileContent, true);
@@ -438,8 +444,13 @@ class Translate
      */
     private function readDictionaryPHP($filename)
     {
+<<<<<<< HEAD
         $phpFile = $filename . '.php';
         assert(file_exists($phpFile));
+=======
+        $phpFile = $filename.'.php';
+        Assert::true(file_exists($phpFile));
+>>>>>>> Migrate assertions to Webmozart
 
         $lang = null;
         include($phpFile);
@@ -459,7 +470,7 @@ class Translate
      */
     private function readDictionaryFile($filename)
     {
-        assert(is_string($filename));
+        Assert::string($filename);
 
         Logger::debug('Translate: Reading dictionary [' . $filename . ']');
 

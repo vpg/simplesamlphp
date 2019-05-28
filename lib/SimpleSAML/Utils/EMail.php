@@ -6,6 +6,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use SimpleSAML\Configuration;
 use SimpleSAML\Logger;
 use SimpleSAML\XHTML\Template;
+use Webmozart\Assert\Assert;
 
 /**
  * E-mailer class that can generate a formatted e-mail from array
@@ -156,9 +157,7 @@ class EMail
      */
     public function setTransportMethod($transportMethod, array $transportOptions = [])
     {
-        assert(is_string($transportMethod));
-        assert(is_array($transportOptions));
-
+        Assert::string($transportMethod);
 
         switch (strtolower($transportMethod)) {
             // smtp transport method
@@ -230,7 +229,7 @@ class EMail
      */
     public static function initFromConfig(EMail $EMail)
     {
-        assert($EMail instanceof EMail);
+        Assert::isInstanceOf($EMail, EMail::class);
 
         $config = Configuration::getInstance();
         $EMail->setTransportMethod(
