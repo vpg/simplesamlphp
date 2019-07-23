@@ -407,13 +407,8 @@ class Translate
      */
     private function readDictionaryJSON($filename)
     {
-<<<<<<< HEAD
         $definitionFile = $filename . '.definition.json';
-        assert(file_exists($definitionFile));
-=======
-        $definitionFile = $filename.'.definition.json';
         Assert::true(file_exists($definitionFile));
->>>>>>> Migrate assertions to Webmozart
 
         $fileContent = file_get_contents($definitionFile);
         $lang = json_decode($fileContent, true);
@@ -444,13 +439,8 @@ class Translate
      */
     private function readDictionaryPHP($filename)
     {
-<<<<<<< HEAD
         $phpFile = $filename . '.php';
-        assert(file_exists($phpFile));
-=======
-        $phpFile = $filename.'.php';
         Assert::true(file_exists($phpFile));
->>>>>>> Migrate assertions to Webmozart
 
         $lang = null;
         include($phpFile);
