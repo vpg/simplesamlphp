@@ -39,7 +39,7 @@ class EMail
      *
      * @throws \PHPMailer\PHPMailer\Exception
      */
-    public function __construct($subject, $from = null, $to = null)
+    public function __construct(string $subject, string $from = null, string $to = null)
     {
         $this->mail = new PHPMailer(true);
         $this->mail->Subject = $subject;
@@ -60,7 +60,7 @@ class EMail
      *
      * @return string Default mail address
      */
-    public static function getDefaultMailAddress()
+    public static function getDefaultMailAddress() : string
     {
         $config = Configuration::getInstance();
         $address = $config->getString('technicalcontact_email', 'na@example.org');
@@ -70,14 +70,14 @@ class EMail
         return $address;
     }
 
-    
+
     /**
      * Set the data that should be embedded in the e-mail body
      *
      * @param array $data The data that should be embedded in the e-mail body
      * @return void
      */
-    public function setData(array $data)
+    public function setData(array $data) : void
     {
         /*
          * Convert every non-array value to an array with the original
@@ -103,7 +103,7 @@ class EMail
      * @param string $text Introduction text
      * @return void
      */
-    public function setText($text)
+    public function setText(string $text) : void
     {
         $this->text = $text;
     }
@@ -115,7 +115,7 @@ class EMail
      * @param string $address Reply-To e-mail address
      * @return void
      */
-    public function addReplyTo($address)
+    public function addReplyTo(string $address) : void
     {
         $this->mail->addReplyTo($address);
     }
@@ -129,7 +129,7 @@ class EMail
      *
      * @throws \PHPMailer\PHPMailer\Exception
      */
-    public function send($plainTextOnly = false)
+    public function send(bool $plainTextOnly = false) : void
     {
         if ($plainTextOnly) {
             $this->mail->isHTML(false);
@@ -143,6 +143,7 @@ class EMail
         $this->mail->send();
     }
 
+
     /**
      * Sets the method by which the email will be sent.  Currently supports what
      * PHPMailer supports: sendmail, mail and smtp.
@@ -154,12 +155,8 @@ class EMail
      *
      * @throws \InvalidArgumentException
      */
-    public function setTransportMethod($transportMethod, array $transportOptions = [])
+    public function setTransportMethod(string $transportMethod, array $transportOptions = []) : void
     {
-        assert(is_string($transportMethod));
-        assert(is_array($transportOptions));
-
-
         switch (strtolower($transportMethod)) {
             // smtp transport method
             case 'smtp':
@@ -221,6 +218,7 @@ class EMail
         }
     }
 
+
     /**
      * Initializes the provided EMail object with the configuration provided from the SimpleSAMLphp configuration.
      *
@@ -228,10 +226,8 @@ class EMail
      * @return EMail
      * @throws \Exception
      */
-    public static function initFromConfig(EMail $EMail)
+    public static function initFromConfig(EMail $EMail) : EMail
     {
-        assert($EMail instanceof EMail);
-
         $config = Configuration::getInstance();
         $EMail->setTransportMethod(
             $config->getString('mail.transport.method', 'mail'),
@@ -249,7 +245,7 @@ class EMail
      *
      * @return string The body of the e-mail
      */
-    public function generateBody($template)
+    public function generateBody(string $template) : string
     {
         $config = Configuration::getInstance();
         $newui = $config->getBoolean('usenewui', false);
