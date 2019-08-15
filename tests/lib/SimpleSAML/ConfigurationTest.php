@@ -558,7 +558,7 @@ class ConfigurationTest extends \SimpleSAML\Test\Utils\ClearStateTestCase
         ]);
         $this->assertEquals($c->getConfigList('missing_opt', '--missing--'), '--missing--');
         $opts = $c->getConfigList('opts');
-        $this->assertInternalType('array', $opts);
+        $this->assertIsArray($opts);
         $this->assertEquals(array_keys($opts), ['a', 'b']);
         $this->assertInstanceOf('SimpleSAML\Configuration', $opts['a']);
         $this->assertEquals($opts['a']->getValue('opt1'), 'value1');

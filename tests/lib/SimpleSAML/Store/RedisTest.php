@@ -16,7 +16,7 @@ use SimpleSAML\Store;
  */
 class RedisTest extends TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $mocked_redis;
 
     /** @var \SimpleSAML\Store\Redis */
@@ -29,7 +29,7 @@ class RedisTest extends TestCase
     /**
      * @return void
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->config = [];
 

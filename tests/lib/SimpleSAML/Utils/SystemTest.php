@@ -27,7 +27,7 @@ class SystemTest extends TestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp() : void
     {
         $this->root = vfsStream::setup(
             self::ROOTDIRNAME,
@@ -49,7 +49,7 @@ class SystemTest extends TestCase
     {
         $res = System::getOS();
 
-        $this->assertInternalType("int", $res);
+        $this->assertIsInt($res);
     }
 
 
