@@ -15,7 +15,7 @@ class EMailTestCase extends ClearStateTestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 
