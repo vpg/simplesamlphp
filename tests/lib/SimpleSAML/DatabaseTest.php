@@ -37,7 +37,7 @@ class DatabaseTest extends TestCase
      */
     protected static function getMethod($getMethod)
     {
-        $class = new \ReflectionClass('SimpleSAML\Database');
+        $class = new \ReflectionClass(\SimpleSAML\Database::class);
         $method = $class->getMethod($getMethod);
         $method->setAccessible(true);
         return $method;
@@ -65,13 +65,13 @@ class DatabaseTest extends TestCase
         $this->config = new \SimpleSAML\Configuration($config, "test/SimpleSAML/DatabaseTest.php");
 
         // Ensure that we have a functional configuration class
-        $this->assertInstanceOf('SimpleSAML\Configuration', $this->config);
+        $this->assertInstanceOf(\SimpleSAML\Configuration::class, $this->config);
         $this->assertEquals($config['database.dsn'], $this->config->getString('database.dsn'));
 
         $this->db = \SimpleSAML\Database::getInstance($this->config);
 
         // Ensure that we have a functional database class.
-        $this->assertInstanceOf('SimpleSAML\Database', $this->db);
+        $this->assertInstanceOf(\SimpleSAML\Database::class, $this->db);
     }
 
 

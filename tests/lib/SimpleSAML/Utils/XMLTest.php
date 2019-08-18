@@ -380,6 +380,7 @@ NOWDOC;
     {
         $xml = '<root><nested>text';
 
+        /** @var string $res */
         $res = XML::isValid($xml, 'unused');
         $expected = 'Failed to parse XML string for schema validation';
 

@@ -2,6 +2,10 @@
 
 namespace SimpleSAML\Test\Module\core\Auth\Process;
 
+use SimpleSAML\Configuration;
+use SimpleSAML\Module\core\Auth\Process\Cardinality;
+use SimpleSAML\Utils\HttpAdapter;
+
 /**
  * Test for the core:Cardinality filter.
  */
@@ -26,7 +30,7 @@ class CardinalityTest extends \PHPUnit\Framework\TestCase
         /** @var \SimpleSAML\Utils\HttpAdapter $http */
         $http = $this->http;
 
-        $filter = new \SimpleSAML\Module\core\Auth\Process\Cardinality($config, null, $http);
+        $filter = new Cardinality($config, null, $http);
         $filter->process($request);
         return $request;
     }
@@ -37,8 +41,8 @@ class CardinalityTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp() : void
     {
-        \SimpleSAML\Configuration::loadFromArray([], '[ARRAY]', 'simplesaml');
-        $this->http = $this->getMockBuilder('SimpleSAML\Utils\HTTPAdapter')
+        Configuration::loadFromArray([], '[ARRAY]', 'simplesaml');
+        $this->http = $this->getMockBuilder(HttpAdapter::class)
                            ->setMethods(['redirectTrustedURL'])
                            ->getMock();
     }

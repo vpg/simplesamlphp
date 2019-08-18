@@ -7,6 +7,8 @@ use PHPUnit\Framework\TestCase;
 use SimpleSAML\Configuration;
 use SimpleSAML\Error\CriticalConfigurationError;
 use SimpleSAML\Store;
+use SimpleSAML\Store\Memcache;
+use SimpleSAML\Store\SQL;
 
 /**
  * Tests for the Store abstract class.
@@ -66,7 +68,7 @@ class StoreTest extends TestCase
 
         $store = Store::getInstance();
 
-        $this->assertInstanceOf('\SimpleSAML\Store\Memcache', $store);
+        $this->assertInstanceOf(Memcache::class, $store);
     }
 
 
@@ -85,7 +87,7 @@ class StoreTest extends TestCase
 
         $store = Store::getInstance();
 
-        $this->assertInstanceOf('SimpleSAML\Store\SQL', $store);
+        $this->assertInstanceOf(SQL::class, $store);
     }
 
 
@@ -104,7 +106,7 @@ class StoreTest extends TestCase
 
         $store = Store::getInstance();
 
-        $this->assertInstanceOf('SimpleSAML\Store\SQL', $store);
+        $this->assertInstanceOf(SQL::class, $store);
     }
 
 
@@ -135,8 +137,8 @@ class StoreTest extends TestCase
         /** @var \SimpleSAML\Store $store */
         $store = Store::getInstance();
 
-        $this->clearInstance($config, '\SimpleSAML\Configuration');
-        $this->clearInstance($store, '\SimpleSAML\Store');
+        $this->clearInstance($config, Configuration::class);
+        $this->clearInstance($store, Store::class);
     }
 
 

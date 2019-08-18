@@ -40,7 +40,7 @@ class SQLTest extends TestCase
     {
         $store = Store::getInstance();
 
-        $this->assertInstanceOf('SimpleSAML\Store\SQL', $store);
+        $this->assertInstanceOf(Store\SQL::class, $store);
     }
 
 
@@ -202,8 +202,8 @@ class SQLTest extends TestCase
         /** @var \SimpleSAML\Store\SQL $store */
         $store = Store::getInstance();
 
-        $this->clearInstance($config, '\SimpleSAML\Configuration');
-        $this->clearInstance($store, '\SimpleSAML\Store');
+        $this->clearInstance($config, Configuration::class);
+        $this->clearInstance($store, Store::class);
     }
 
 
