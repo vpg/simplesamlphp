@@ -12,6 +12,7 @@ interface ClearableState
 {
     /**
      * Clear any cached internal state.
+     * @return void
      */
     public static function clearInternalState();
 }
