@@ -2,6 +2,7 @@
 
 namespace SimpleSAML\Test;
 
+use SAML2\Constants;
 use SimpleSAML\Configuration;
 use SimpleSAML\Error\CriticalConfigurationError;
 
@@ -525,7 +526,7 @@ class ConfigurationTest extends \SimpleSAML\Test\Utils\ClearStateTestCase
         ]);
         $this->assertEquals($c->getConfigItem('missing_opt', '--missing--'), '--missing--');
         $opt = $c->getConfigItem('opt');
-        $this->assertInstanceOf('SimpleSAML\Configuration', $opt);
+        $this->assertInstanceOf(Configuration::class, $opt);
         $this->assertEquals($opt->getValue('a'), 42);
     }
 
@@ -560,9 +561,9 @@ class ConfigurationTest extends \SimpleSAML\Test\Utils\ClearStateTestCase
         $opts = $c->getConfigList('opts');
         $this->assertIsArray($opts);
         $this->assertEquals(array_keys($opts), ['a', 'b']);
-        $this->assertInstanceOf('SimpleSAML\Configuration', $opts['a']);
+        $this->assertInstanceOf(Configuration::class, $opts['a']);
         $this->assertEquals($opts['a']->getValue('opt1'), 'value1');
-        $this->assertInstanceOf('SimpleSAML\Configuration', $opts['b']);
+        $this->assertInstanceOf(Configuration::class, $opts['b']);
         $this->assertEquals($opts['b']->getValue('opt2'), 'value2');
     }
 
@@ -651,14 +652,14 @@ class ConfigurationTest extends \SimpleSAML\Test\Utils\ClearStateTestCase
             [
                 [
                     'Location' => 'https://example.com/endpoint.php',
-                    'Binding' => \SAML2\Constants::BINDING_HTTP_POST,
+                    'Binding' => Constants::BINDING_HTTP_POST,
                 ],
             ],
             // define the ResponseLocation too
             [
                 [
                     'Location' => 'https://example.com/endpoint.php',
-                    'Binding' => \SAML2\Constants::BINDING_HTTP_POST,
+                    'Binding' => Constants::BINDING_HTTP_POST,
                     'ResponseLocation' => 'https://example.com/endpoint.php',
                 ],
             ],
@@ -667,12 +668,12 @@ class ConfigurationTest extends \SimpleSAML\Test\Utils\ClearStateTestCase
                 [
                     'index' => 1,
                     'Location' => 'https://www1.example.com/endpoint.php',
-                    'Binding' => \SAML2\Constants::BINDING_HTTP_REDIRECT,
+                    'Binding' => Constants::BINDING_HTTP_REDIRECT,
                 ],
                 [
                     'index' => 2,
                     'Location' => 'https://www2.example.com/endpoint.php',
-                    'Binding' => \SAML2\Constants::BINDING_HTTP_POST,
+                    'Binding' => Constants::BINDING_HTTP_POST,
                 ],
             ],
             // make sure isDefault has priority over indexes
@@ -680,13 +681,13 @@ class ConfigurationTest extends \SimpleSAML\Test\Utils\ClearStateTestCase
                 [
                     'index' => 1,
                     'Location' => 'https://www2.example.com/endpoint.php',
-                    'Binding' => \SAML2\Constants::BINDING_HTTP_POST,
+                    'Binding' => Constants::BINDING_HTTP_POST,
                 ],
                 [
                     'index' => 2,
                     'isDefault' => true,
                     'Location' => 'https://www1.example.com/endpoint.php',
-                    'Binding' => \SAML2\Constants::BINDING_HTTP_REDIRECT,
+                    'Binding' => Constants::BINDING_HTTP_REDIRECT,
                 ],
             ],
             // make sure endpoints with invalid bindings are ignored and those marked as NOT default are still used
@@ -700,7 +701,7 @@ class ConfigurationTest extends \SimpleSAML\Test\Utils\ClearStateTestCase
                     'index' => 2,
                     'isDefault' => false,
                     'Location' => 'https://www2.example.com/endpoint.php',
-                    'Binding' => \SAML2\Constants::BINDING_HTTP_POST,
+                    'Binding' => Constants::BINDING_HTTP_POST,
                 ],
             ],
         ];
@@ -708,34 +709,34 @@ class ConfigurationTest extends \SimpleSAML\Test\Utils\ClearStateTestCase
             // output should be completed with the default binding (HTTP-POST for ACS)
             [
                 'Location' => 'https://example.com/endpoint.php',
-                'Binding' => \SAML2\Constants::BINDING_HTTP_POST,
+                'Binding' => Constants::BINDING_HTTP_POST,
             ],
             // we should just get the first endpoint with the default binding
             [
                 'Location' => 'https://www1.example.com/endpoint.php',
-                'Binding' => \SAML2\Constants::BINDING_HTTP_POST,
+                'Binding' => Constants::BINDING_HTTP_POST,
             ],
             // if we specify the binding, we should get it back
             [
                 'Location' => 'https://example.com/endpoint.php',
-                'Binding' => \SAML2\Constants::BINDING_HTTP_POST
+                'Binding' => Constants::BINDING_HTTP_POST
             ],
             // if we specify ResponseLocation, we should get it back too
             [
                 'Location' => 'https://example.com/endpoint.php',
-                'Binding' => \SAML2\Constants::BINDING_HTTP_POST,
+                'Binding' => Constants::BINDING_HTTP_POST,
                 'ResponseLocation' => 'https://example.com/endpoint.php',
             ],
             // indexes must NOT be taken into account, order is the only thing that matters here
             [
                 'Location' => 'https://www1.example.com/endpoint.php',
-                'Binding' => \SAML2\Constants::BINDING_HTTP_REDIRECT,
+                'Binding' => Constants::BINDING_HTTP_REDIRECT,
                 'index' => 1,
             ],
             // isDefault must have higher priority than indexes
             [
                 'Location' => 'https://www1.example.com/endpoint.php',
-                'Binding' => \SAML2\Constants::BINDING_HTTP_REDIRECT,
+                'Binding' => Constants::BINDING_HTTP_REDIRECT,
                 'isDefault' => true,
                 'index' => 2,
             ],
@@ -744,7 +745,7 @@ class ConfigurationTest extends \SimpleSAML\Test\Utils\ClearStateTestCase
                 'index' => 2,
                 'isDefault' => false,
                 'Location' => 'https://www2.example.com/endpoint.php',
-                'Binding' => \SAML2\Constants::BINDING_HTTP_POST,
+                'Binding' => Constants::BINDING_HTTP_POST,
             ]
         ];
 
@@ -759,11 +760,11 @@ class ConfigurationTest extends \SimpleSAML\Test\Utils\ClearStateTestCase
         ];
 
         $valid_bindings = [
-            \SAML2\Constants::BINDING_HTTP_POST,
-            \SAML2\Constants::BINDING_HTTP_REDIRECT,
-            \SAML2\Constants::BINDING_HOK_SSO,
-            \SAML2\Constants::BINDING_HTTP_ARTIFACT.
-            \SAML2\Constants::BINDING_SOAP,
+            Constants::BINDING_HTTP_POST,
+            Constants::BINDING_HTTP_REDIRECT,
+            Constants::BINDING_HOK_SSO,
+            Constants::BINDING_HTTP_ARTIFACT.
+            Constants::BINDING_SOAP,
         ];
 
         // run all general tests with AssertionConsumerService endpoint type
@@ -791,14 +792,14 @@ class ConfigurationTest extends \SimpleSAML\Test\Utils\ClearStateTestCase
         $this->assertEquals(
             [
                 'Location' => 'https://example.com/ars',
-                'Binding' => \SAML2\Constants::BINDING_SOAP,
+                'Binding' => Constants::BINDING_SOAP,
             ],
             $c->getDefaultEndpoint('ArtifactResolutionService')
         );
         $this->assertEquals(
             [
                 'Location' => 'https://example.com/slo',
-                'Binding' => \SAML2\Constants::BINDING_HTTP_REDIRECT,
+                'Binding' => Constants::BINDING_HTTP_REDIRECT,
             ],
             $c->getDefaultEndpoint('SingleLogoutService')
         );
@@ -859,7 +860,7 @@ class ConfigurationTest extends \SimpleSAML\Test\Utils\ClearStateTestCase
         $e = [
             [
                 'Location' => 'https://example.com/endpoint.php',
-                'Binding' => \SAML2\Constants::BINDING_HTTP_REDIRECT,
+                'Binding' => Constants::BINDING_HTTP_REDIRECT,
                 'ResponseLocation' => 'https://example.com/response.php',
             ]
         ];
@@ -910,7 +911,7 @@ class ConfigurationTest extends \SimpleSAML\Test\Utils\ClearStateTestCase
             [
                 [
                     'Location' => 'https://example.com/endpoint.php',
-                    'Binding' => \SAML2\Constants::BINDING_HTTP_REDIRECT,
+                    'Binding' => Constants::BINDING_HTTP_REDIRECT,
                     'ResponseLocation' => 1234,
                 ],
             ],
@@ -918,7 +919,7 @@ class ConfigurationTest extends \SimpleSAML\Test\Utils\ClearStateTestCase
             [
                 [
                     'Location' => 'https://example.com/endpoint.php',
-                    'Binding' => \SAML2\Constants::BINDING_HTTP_REDIRECT,
+                    'Binding' => Constants::BINDING_HTTP_REDIRECT,
                     'index' => 'string',
                 ],
             ],
