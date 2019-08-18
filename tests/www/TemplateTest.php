@@ -37,7 +37,6 @@ class TemplateTest extends TestCase
                 ob_start();
                 try {
                     $t->show();
-                    $this->addToAssertionCount(1);
                 } catch (SyntaxError $e) {
                     $this->fail($e->getMessage().' in '.$e->getFile().':'.$e->getLine());
                 }
@@ -56,7 +55,6 @@ class TemplateTest extends TestCase
                         ob_start();
                         try {
                             $t->show();
-                            $this->addToAssertionCount(1);
                         } catch (SyntaxError $e) {
                             $this->fail($e->getMessage().' in '.$e->getFile().':'.$e->getLine());
                         }
