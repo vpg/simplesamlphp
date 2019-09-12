@@ -4,7 +4,11 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
+<<<<<<< HEAD
     "content-hash": "879c998e165452c34c10af468a3428ad",
+=======
+    "content-hash": "c25f8943ace3f28dcdca6c8cd3b21269",
+>>>>>>> Upgrade saml2-library
     "packages": [
         {
             "name": "gettext/gettext",
@@ -434,6 +438,7 @@
         },
         {
             "name": "simplesamlphp/saml2",
+<<<<<<< HEAD
             "version": "v4.1.0",
             "source": {
                 "type": "git",
@@ -444,6 +449,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/simplesamlphp/saml2/zipball/fcc06b240025c0b5f490d060f6023b4decbfb0d4",
                 "reference": "fcc06b240025c0b5f490d060f6023b4decbfb0d4",
+=======
+            "version": "v4.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/simplesamlphp/saml2.git",
+                "reference": "299162390ff1ec1c2cc864bc49d8e1b7df1b07dc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/simplesamlphp/saml2/zipball/299162390ff1ec1c2cc864bc49d8e1b7df1b07dc",
+                "reference": "299162390ff1ec1c2cc864bc49d8e1b7df1b07dc",
+>>>>>>> Upgrade saml2-library
                 "shasum": ""
             },
             "require": {
@@ -485,7 +502,11 @@
                 }
             ],
             "description": "SAML2 PHP library from SimpleSAMLphp",
+<<<<<<< HEAD
             "time": "2019-10-07T19:08:22+00:00"
+=======
+            "time": "2019-09-12T19:01:04+00:00"
+>>>>>>> Upgrade saml2-library
         },
         {
             "name": "simplesamlphp/simplesamlphp-module-adfs",
