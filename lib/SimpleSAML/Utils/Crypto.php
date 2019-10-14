@@ -25,7 +25,7 @@ class Crypto
      *
      * @see \SimpleSAML\Utils\Crypto::aesDecrypt()
      */
-    private static function aesDecrypt(string $ciphertext, string $secret): string
+    private static function aesDecryptInternal(string $ciphertext, string $secret): string
     {
         $len = mb_strlen($ciphertext, '8bit');
         if ($len < 48) {
@@ -75,7 +75,7 @@ class Crypto
      * @author Andreas Solberg, UNINETT AS <andreas.solberg@uninett.no>
      * @author Jaime Perez, UNINETT AS <jaime.perez@uninett.no>
      */
-    public static function aesDecrypt(string $ciphertext) : string
+    public static function aesDecrypt(string $ciphertext): string
     {
         return self::aesDecryptInternal($ciphertext, Config::getSecretSalt());
     }
@@ -93,7 +93,7 @@ class Crypto
      *
      * @see \SimpleSAML\Utils\Crypto::aesEncrypt()
      */
-    private static function aesEncrypt(string $data, string $secret): string
+    private static function aesEncryptInternal(string $data, string $secret): string
     {
         if (!function_exists("openssl_encrypt")) {
             throw new Error\Exception('The openssl PHP module is not loaded.');
