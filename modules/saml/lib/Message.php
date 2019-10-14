@@ -332,7 +332,7 @@ class Message
          * find the existing private key
          *
          * @var array $keyArray  Because the second param is true
-         */        
+         */
         $keyArray = Utils\Crypto::loadPrivateKey($dstMetadata, true);
         Assert::keyExists($keyArray, 'PEM');
 
