@@ -5,16 +5,14 @@
  * initializes the SimpleSAMLphp config class with the correct path.
  */
 
-
 namespace SimpleSAML\Module\cron;
 
 use SimpleSAML\Configuration;
 use SimpleSAML\Session;
-use Symfony\Component\HttpFoundation\Request;
 
 $config = Configuration::getInstance();
 $session = Session::getSessionFromRequest();
 
 $controller = new Controller\Cron($config, $session);
 $response = $controller->info();
-$response->send();
+$response->show();

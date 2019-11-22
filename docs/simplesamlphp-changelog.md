@@ -15,12 +15,15 @@ Released TBD
 
 ## Version 1.18.0
 
-Released 2019-09-xx
+Released 2019-11-19
 
   * Fixed an issue with warnings being logged when using PHP 7.2 or newer (#1168).
   * Fixed an issue with web server aliases or rewritten URLs not working (#1023, #1093).
   * Fixed an issue that prevented errors to be logged if the log file was not writeable (#1194).
-  * Replace custom Email class with the phpmailer library.
+  * Fixed an issue with old-style NameIDPolicy configurations that disallowed creating new NameIDs (#1230).
+  * Resolved a security issue that exposed host information to unauthenticated users. See
+    [SSPSA 201911-02](https://simplesamlphp.org/security/201911-02).
+  * Replaced custom Email class with the phpmailer library.
   * Allow logging to STDERR in the `logging.handler` option by setting it to `stderr`.
   * Allow use of stream wrappers (e.g. s3://) in paths.
   * Improved 'update or insert' handling for different SQL drivers.
@@ -40,6 +43,25 @@ Released 2019-09-xx
   * New SP metadata configuration options `AssertionConsumerService` and `SingleLogoutServiceLocation`
     to allow overriding the default URL paths.
   * Added support for per-IDP configurable `AuthnContextClassRef`/`AuthnContextComparison`.
+
+## Version 1.17.8
+
+Released 2019-11-20
+
+  * Resolved a security issue that exposed host information to unauthenticated users. See
+    [SSPSA 201911-02](https://simplesamlphp.org/security/201911-02).
+
+### consentAdmin
+
+  * Fixed an issue with CSS and Javascript not loading for the module in the new user
+    interface.
+
+## Version 1.17.7
+
+Released 2019-11-06
+
+  * Resolved a security issue that allows to bypass signature validation. See
+    [SSPSA 201911-01](https://simplesamlphp.org/security/201911-01).
 
 ## Version 1.17.6
 

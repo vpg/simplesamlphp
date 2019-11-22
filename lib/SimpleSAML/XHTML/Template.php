@@ -1,13 +1,13 @@
 <?php
 
-namespace SimpleSAML\XHTML;
-
 /**
  * A minimalistic XHTML PHP based template system implemented for SimpleSAMLphp.
  *
  * @author Andreas Åkre Solberg, UNINETT AS. <andreas.solberg@uninett.no>
  * @package SimpleSAMLphp
  */
+
+namespace SimpleSAML\XHTML;
 
 use SimpleSAML\Configuration;
 use SimpleSAML\Locale\Language;
@@ -292,7 +292,7 @@ class Template extends Response
 
         // abort if twig template does not exist
         if (!$loader->exists($this->twig_template)) {
-            throw new \Exception('Template-file \"' . $this->template . '\" does not exist.');
+            throw new \Exception('Template-file \"' . $this->getTemplateName() . '\" does not exist.');
         }
 
         // load extra i18n domains

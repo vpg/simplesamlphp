@@ -267,10 +267,7 @@ class Error extends Exception
             Assert::true(false);
         } else {
             $t = new Template($config, 'error.php', 'errors');
-            $translator = $t->getTranslator();
             $t->data = array_merge($t->data, $data);
-            $t->data['dictTitleTranslated'] = $translator->t($t->data['dictTitle']);
-            $t->data['dictDescrTranslated'] = $translator->t($t->data['dictDescr'], $t->data['parameters']);
             $t->show();
         }
 
