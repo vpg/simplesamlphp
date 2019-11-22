@@ -2,11 +2,11 @@
 
 namespace SimpleSAML\Auth;
 
-use \SimpleSAML\Configuration;
-use \SimpleSAML\Error;
-use \SimpleSAML\Module;
-use \SimpleSAML\Session;
-use \SimpleSAML\Utils;
+use SimpleSAML\Configuration;
+use SimpleSAML\Error;
+use SimpleSAML\Module;
+use SimpleSAML\Session;
+use SimpleSAML\Utils;
 
 /**
  * Helper class for simple authentication applications.
@@ -23,7 +23,7 @@ class Simple
      */
     protected $authSource;
 
-    /** @var \SimpleSAML\Configuration|null */
+    /** @var \SimpleSAML\Configuration */
     protected $app_config;
 
     /** @var \SimpleSAML\Session */
@@ -45,7 +45,7 @@ class Simple
             $config = Configuration::getInstance();
         }
         $this->authSource = $authSource;
-        $this->app_config = $config->getConfigItem('application', null);
+        $this->app_config = $config->getConfigItem('application');
 
         if ($session === null) {
             $session = Session::getSessionFromRequest();
@@ -59,7 +59,7 @@ class Simple
      *
      * @return Source The authentication source.
      *
-     * @throws AuthSourceError If the requested auth source is unknown.
+     * @throws \SimpleSAML\Error\AuthSource If the requested auth source is unknown.
      */
     public function getAuthSource()
     {
@@ -377,27 +377,22 @@ class Simple
         $scheme = parse_url($url, PHP_URL_SCHEME);
         $host = parse_url($url, PHP_URL_HOST) ? : Utils\HTTP::getSelfHost();
         $port = parse_url($url, PHP_URL_PORT) ? : (
-            $scheme ? '' : trim(Utils\HTTP::getServerPort(), ':')
+            $scheme ? '' : ltrim(Utils\HTTP::getServerPort(), ':')
         );
         $scheme = $scheme ? : (Utils\HTTP::getServerHTTPS() ? 'https' : 'http');
         $path = parse_url($url, PHP_URL_PATH) ? : '/';
         $query = parse_url($url, PHP_URL_QUERY) ? : '';
         $fragment = parse_url($url, PHP_URL_FRAGMENT) ? : '';
 
-        $port = !empty($port) ? ':'.$port : '';
+        $port = !empty($port) ? ':' . $port : '';
         if (($scheme === 'http' && $port === ':80') || ($scheme === 'https' && $port === ':443')) {
             $port = '';
         }
 
-        if (is_null($this->app_config)) {
-            // nothing more we can do here
-            return $scheme.'://'.$host.$port.$path.($query ? '?'.$query : '').($fragment ? '#'.$fragment : '');
-        }
-
         $base = trim($this->app_config->getString(
             'baseURL',
-            $scheme.'://'.$host.$port
+            $scheme . '://' . $host . $port
         ), '/');
-        return $base.$path.($query ? '?'.$query : '').($fragment ? '#'.$fragment : '');
+        return $base . $path . ($query ? '?' . $query : '') . ($fragment ? '#' . $fragment : '');
     }
 }

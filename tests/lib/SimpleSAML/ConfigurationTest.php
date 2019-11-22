@@ -231,17 +231,17 @@ class ConfigurationTest extends \SimpleSAML\Test\Utils\ClearStateTestCase
     public function testGetBaseDir()
     {
         $c = Configuration::loadFromArray([]);
-        $this->assertEquals($c->getBaseDir(), dirname(dirname(dirname(dirname(__FILE__)))).DIRECTORY_SEPARATOR);
+        $this->assertEquals($c->getBaseDir(), dirname(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR);
 
         $c = Configuration::loadFromArray([
-            'basedir' => DIRECTORY_SEPARATOR.'basedir',
+            'basedir' => DIRECTORY_SEPARATOR . 'basedir',
         ]);
-        $this->assertEquals($c->getBaseDir(), DIRECTORY_SEPARATOR.'basedir'.DIRECTORY_SEPARATOR);
+        $this->assertEquals($c->getBaseDir(), DIRECTORY_SEPARATOR . 'basedir' . DIRECTORY_SEPARATOR);
 
         $c = Configuration::loadFromArray([
-            'basedir' => DIRECTORY_SEPARATOR.'basedir'.DIRECTORY_SEPARATOR,
+            'basedir' => DIRECTORY_SEPARATOR . 'basedir' . DIRECTORY_SEPARATOR,
         ]);
-        $this->assertEquals($c->getBaseDir(), DIRECTORY_SEPARATOR.'basedir'.DIRECTORY_SEPARATOR);
+        $this->assertEquals($c->getBaseDir(), DIRECTORY_SEPARATOR . 'basedir' . DIRECTORY_SEPARATOR);
     }
 
 
@@ -523,9 +523,11 @@ class ConfigurationTest extends \SimpleSAML\Test\Utils\ClearStateTestCase
         $c = Configuration::loadFromArray([
             'opt' => ['a' => 42],
         ]);
-        $this->assertEquals($c->getConfigItem('missing_opt', '--missing--'), '--missing--');
+        $this->assertNull($c->getConfigItem('missing_opt', null));
         $opt = $c->getConfigItem('opt');
-        $this->assertInstanceOf('SimpleSAML\Configuration', $opt);
+        $notOpt = $c->getConfigItem('notOpt');
+        $this->assertInstanceOf(Configuration::class, $opt);
+        $this->assertInstanceOf(Configuration::class, $notOpt);
         $this->assertEquals($opt->getValue('a'), 42);
     }
 
@@ -556,13 +558,13 @@ class ConfigurationTest extends \SimpleSAML\Test\Utils\ClearStateTestCase
                 'b' => ['opt2' => 'value2'],
             ],
         ]);
-        $this->assertEquals($c->getConfigList('missing_opt', '--missing--'), '--missing--');
+        $this->assertEquals($c->getConfigList('missing_opt'), []);
         $opts = $c->getConfigList('opts');
         $this->assertInternalType('array', $opts);
         $this->assertEquals(array_keys($opts), ['a', 'b']);
-        $this->assertInstanceOf('SimpleSAML\Configuration', $opts['a']);
+        $this->assertInstanceOf(Configuration::class, $opts['a']);
         $this->assertEquals($opts['a']->getValue('opt1'), 'value1');
-        $this->assertInstanceOf('SimpleSAML\Configuration', $opts['b']);
+        $this->assertInstanceOf(Configuration::class, $opts['b']);
         $this->assertEquals($opts['b']->getValue('opt2'), 'value2');
     }
 
@@ -762,7 +764,7 @@ class ConfigurationTest extends \SimpleSAML\Test\Utils\ClearStateTestCase
             \SAML2\Constants::BINDING_HTTP_POST,
             \SAML2\Constants::BINDING_HTTP_REDIRECT,
             \SAML2\Constants::BINDING_HOK_SSO,
-            \SAML2\Constants::BINDING_HTTP_ARTIFACT.
+            \SAML2\Constants::BINDING_HTTP_ARTIFACT,
             \SAML2\Constants::BINDING_SOAP,
         ];
 
@@ -829,7 +831,7 @@ class ConfigurationTest extends \SimpleSAML\Test\Utils\ClearStateTestCase
             $this->fail('Failed to detect invalid endpoint binding.');
         } catch (\Exception $e) {
             $this->assertEquals(
-                '[ARRAY][\'SingleLogoutService\']:Could not find a supported SingleLogoutService '.'endpoint.',
+                '[ARRAY][\'SingleLogoutService\']:Could not find a supported SingleLogoutService ' . 'endpoint.',
                 $e->getMessage()
             );
         }

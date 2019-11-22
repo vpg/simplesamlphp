@@ -44,7 +44,7 @@
         "ext-mbstring": "*",
         "gettext/gettext": "^4.6",
         "phpmailer/phpmailer": "^6.0",
-        "robrichards/xmlseclibs": "^3.0",
+        "robrichards/xmlseclibs": "^3.0.4",
         "simplesamlphp/saml2": "^3.4 || ^4.0",
         "simplesamlphp/simplesamlphp-module-adfs": "^0.9",
         "simplesamlphp/simplesamlphp-module-authcrypt": "^0.9",
@@ -61,7 +61,7 @@
         "simplesamlphp/simplesamlphp-module-discopower": "^0.9",
         "simplesamlphp/simplesamlphp-module-exampleattributeserver": "^1.0",
         "simplesamlphp/simplesamlphp-module-expirycheck": "^0.9",
-        "simplesamlphp/simplesamlphp-module-ldap": "^0.9",
+        "simplesamlphp/simplesamlphp-module-ldap": "^0.9 | ^1.0",
         "simplesamlphp/simplesamlphp-module-memcookie": "^1.2",
         "simplesamlphp/simplesamlphp-module-memcachemonitor": "^0.9",
         "simplesamlphp/simplesamlphp-module-metarefresh": "^0.9",
@@ -87,7 +87,11 @@
     "require-dev": {
         "ext-curl": "*",
         "mikey179/vfsstream": "~1.6",
-        "phpunit/phpunit": "~5.7"
+        "phpunit/phpunit": "~5.7",
+        "sensiolabs/security-checker": "^5.0.3",
+        "simplesamlphp/simplesamlphp-test-framework": "^0.0.12",
+        "squizlabs/php_codesniffer": "^3.5",
+        "vimeo/psalm": "~1.1.9"
     },
     "suggest": {
         "predis/predis": "Needed if a Redis server is used to store session information",

@@ -51,8 +51,8 @@ class SessionHandlerPHP extends SessionHandler
         if (session_status() === PHP_SESSION_ACTIVE) {
             if (session_name() === $this->cookie_name || $this->cookie_name === null) {
                 Logger::warning(
-                    'There is already a PHP session with the same name as SimpleSAMLphp\'s session, or the '.
-                    "'session.phpsession.cookiename' configuration option is not set. Make sure to set ".
+                    'There is already a PHP session with the same name as SimpleSAMLphp\'s session, or the ' .
+                    "'session.phpsession.cookiename' configuration option is not set. Make sure to set " .
                     "SimpleSAMLphp's cookie name with a value not used by any other applications."
                 );
             }
@@ -67,16 +67,18 @@ class SessionHandlerPHP extends SessionHandler
             session_write_close();
         }
 
-        if (!empty($this->cookie_name)) {
-            session_name($this->cookie_name);
-        } else {
+
+        if (empty($this->cookie_name)) {
             $this->cookie_name = session_name();
+        } elseif (!headers_sent() || version_compare(PHP_VERSION, '7.2', '<')) {
+            session_name($this->cookie_name);
         }
 
         $params = $this->getCookieParams();
 
         if (!headers_sent()) {
             if (version_compare(PHP_VERSION, '7.3.0', '>=')) {
+                /** @psalm-suppress InvalidArgument  This annotation may be removed in Psalm >=3.0.15 */
                 session_set_cookie_params([
                     'lifetime' => $params['lifetime'],
                     'path' => $params['path'],
@@ -88,7 +90,7 @@ class SessionHandlerPHP extends SessionHandler
             } else {
                 /* in older versions of PHP we need a nasty hack to set RFC6265bis SameSite attribute */
                 if ($params['samesite'] !== null and !preg_match('/;\s+samesite/i', $params['path'])) {
-                    $params['path'] .= '; SameSite='.$params['samesite'];
+                    $params['path'] .= '; SameSite=' . $params['samesite'];
                 }
                 session_set_cookie_params(
                     $params['lifetime'],
@@ -168,6 +170,10 @@ class SessionHandlerPHP extends SessionHandler
             if (($sid_length * $sid_bits_per_char) < 128) {
                 Logger::warning("Unsafe defaults used for sessionId generation!");
             }
+            /**
+             * This annotation may be removed as soon as we start using vimeo/psalm 3.x
+             * @psalm-suppress TooFewArguments
+             */
             $sessionId = session_create_id();
         } else {
             $sessionId = bin2hex(openssl_random_pseudo_bytes(16));
@@ -187,6 +193,11 @@ class SessionHandlerPHP extends SessionHandler
     {
         if (!$this->hasSessionCookie()) {
             return null; // there's no session cookie, can't return ID
+        }
+
+        if (version_compare(PHP_VERSION, '7.2', 'ge') && headers_sent()) {
+            // latest versions of PHP don't allow loading a session when output sent, get the ID from the cookie
+            return $_COOKIE[$this->cookie_name];
         }
 
         // do not rely on session_id() as it can return the ID of a previous session. Get it from the cookie instead.
@@ -241,7 +252,7 @@ class SessionHandlerPHP extends SessionHandler
         assert(is_string($sessionId) || $sessionId === null);
 
         if ($sessionId !== null) {
-            if (session_id() === '') {
+            if (session_id() === '' && !(version_compare(PHP_VERSION, '7.2', 'ge') && headers_sent())) {
                 // session not initiated with getCookieSessionId(), start session without setting cookie
                 $ret = ini_set('session.use_cookies', '0');
                 if ($ret === false) {
@@ -353,6 +364,7 @@ class SessionHandlerPHP extends SessionHandler
         }
 
         if (version_compare(PHP_VERSION, '7.3.0', '>=')) {
+            /** @psalm-suppress InvalidArgument  This annotation may be removed in Psalm >=3.0.15 */
             session_set_cookie_params($cookieParams);
         } else {
             session_set_cookie_params(
@@ -364,7 +376,7 @@ class SessionHandlerPHP extends SessionHandler
             );
         }
 
-        session_id($sessionID);
+        session_id(strval($sessionID));
         @session_start();
     }
 }

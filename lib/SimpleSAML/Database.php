@@ -152,7 +152,7 @@ class Database
 
             return $db;
         } catch (PDOException $e) {
-            throw new \Exception("Database error: ".$e->getMessage());
+            throw new \Exception("Database error: " . $e->getMessage());
         }
     }
 
@@ -183,7 +183,7 @@ class Database
      */
     public function applyPrefix($table)
     {
-        return $this->tablePrefix.$table;
+        return $this->tablePrefix . $table;
     }
 
 
@@ -195,7 +195,7 @@ class Database
      * @param array  $params Parameters
      *
      * @throws \Exception If an error happens while trying to execute the query.
-     * @return bool|\PDOStatement object
+     * @return \PDOStatement object
      */
     private function query($db, $stmt, $params)
     {
@@ -219,7 +219,7 @@ class Database
             return $query;
         } catch (PDOException $e) {
             $this->lastError = $db->errorInfo();
-            throw new \Exception("Database error: ".$e->getMessage());
+            throw new \Exception("Database error: " . $e->getMessage());
         }
     }
 
@@ -242,7 +242,7 @@ class Database
             return $db->exec($stmt);
         } catch (PDOException $e) {
             $this->lastError = $db->errorInfo();
-            throw new \Exception("Database error: ".$e->getMessage());
+            throw new \Exception("Database error: " . $e->getMessage());
         }
     }
 
@@ -274,7 +274,7 @@ class Database
      * @param string $stmt Prepared SQL statement
      * @param array  $params Parameters
      *
-     * @return \PDOStatement|bool object
+     * @return \PDOStatement object
      */
     public function read($stmt, $params = [])
     {

@@ -1,7 +1,5 @@
 <?php
 
-namespace SimpleSAML\XHTML;
-
 /**
  * A minimalistic XHTML PHP based template system implemented for SimpleSAMLphp.
  *
@@ -9,8 +7,7 @@ namespace SimpleSAML\XHTML;
  * @package SimpleSAMLphp
  */
 
-use SimpleSAML\TwigConfigurableI18n\Twig\Environment as Twig_Environment;
-use SimpleSAML\TwigConfigurableI18n\Twig\Extensions\Extension\I18n as Twig_Extensions_Extension_I18n;
+namespace SimpleSAML\XHTML;
 
 use SimpleSAML\Configuration;
 use SimpleSAML\Locale\Language;
@@ -18,8 +15,9 @@ use SimpleSAML\Locale\Localization;
 use SimpleSAML\Locale\Translate;
 use SimpleSAML\Logger;
 use SimpleSAML\Module;
+use SimpleSAML\TwigConfigurableI18n\Twig\Environment as Twig_Environment;
+use SimpleSAML\TwigConfigurableI18n\Twig\Extensions\Extension\I18n as Twig_Extensions_Extension_I18n;
 use SimpleSAML\Utils;
-
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Loader\FilesystemLoader;
 use Twig\TwigFilter;
@@ -147,8 +145,10 @@ class Template extends Response
         if ($this->useNewUI) {
             // check if we need to attach a theme controller
             $controller = $this->configuration->getString('theme.controller', false);
-            if ($controller && class_exists($controller) &&
-                in_array(TemplateControllerInterface::class, class_implements($controller))
+            if (
+                $controller
+                && class_exists($controller)
+                && in_array(TemplateControllerInterface::class, class_implements($controller))
             ) {
                 /** @var \SimpleSAML\XHTML\TemplateControllerInterface $this->controller */
                 $this->controller = new $controller();
@@ -165,16 +165,25 @@ class Template extends Response
     /**
      * Return the URL of an asset, including a cache-buster parameter that depends on the last modification time of
      * the original file.
-     *
      * @param string $asset
+     * @param string|null $module
      * @return string
      */
-    public function asset($asset)
+    public function asset($asset, $module = null)
     {
-        $file = $this->configuration->getBaseDir().'www/assets/'.$asset;
+        $baseDir = $this->configuration->getBaseDir();
+        if (is_null($module)) {
+            $file = $baseDir . 'www/assets/' . $asset;
+            $basePath =  $this->configuration->getBasePath();
+            $path = $basePath . 'assets/' . $asset;
+        } else {
+            $file = $baseDir . 'modules/' . $module . '/www/assets/' . $asset;
+            $path = Module::getModuleUrl($module . '/assets/' . $asset);
+        }
+
         if (!file_exists($file)) {
             // don't be too harsh if an asset is missing, just pretend it's there...
-            return $this->configuration->getBasePath().'assets/'.$asset;
+            return $path;
         }
 
         $tag = $this->configuration->getVersion();
@@ -182,7 +191,8 @@ class Template extends Response
             $tag = strval(filemtime($file));
         }
         $tag = substr(hash('md5', $tag), 0, 5);
-        return $this->configuration->getBasePath().'assets/'.$asset.'?tag='.$tag;
+
+        return $path . '?tag=' . $tag;
     }
 
 
@@ -218,7 +228,7 @@ class Template extends Response
         }
 
         if ($this->useNewUI || ($this->theme['module'] !== null)) {
-            return $templateName.'.twig';
+            return $templateName . '.twig';
         }
         return $templateName;
     }
@@ -236,7 +246,7 @@ class Template extends Response
 
         // get namespace if any
         list($namespace, $filename) = $this->findModuleAndTemplateName($filename);
-        $this->twig_template = ($namespace !== null) ? '@'.$namespace.'/'.$filename : $filename;
+        $this->twig_template = ($namespace !== null) ? '@' . $namespace . '/' . $filename : $filename;
         $loader = new TemplateLoader();
         $templateDirs = $this->findThemeTemplateDirs();
         if ($this->module && $this->module != 'core') {
@@ -281,7 +291,7 @@ class Template extends Response
 
         // abort if twig template does not exist
         if (!$loader->exists($this->twig_template)) {
-            throw new \Exception('Template-file \"'.$this->template.'\" does not exist.');
+            throw new \Exception('Template-file \"' . $this->getTemplateName() . '\" does not exist.');
         }
 
         // load extra i18n domains
@@ -353,25 +363,25 @@ class Template extends Response
         }
 
         // setup directories & namespaces
-        $themeDir = Module::getModuleDir($this->theme['module']).'/themes/'.$this->theme['name'];
+        $themeDir = Module::getModuleDir($this->theme['module']) . '/themes/' . $this->theme['name'];
         $subdirs = scandir($themeDir);
         if (empty($subdirs)) {
             // no subdirectories in the theme directory, nothing to do here
             // this is probably wrong, log a message
-            Logger::warning('Empty theme directory for theme "'.$this->theme['name'].'".');
+            Logger::warning('Empty theme directory for theme "' . $this->theme['name'] . '".');
             return [];
         }
 
         $themeTemplateDirs = [];
         foreach ($subdirs as $entry) {
             // discard anything that's not a directory. Expression is negated to profit from lazy evaluation
-            if (!($entry !== '.' && $entry !== '..' && is_dir($themeDir.'/'.$entry))) {
+            if (!($entry !== '.' && $entry !== '..' && is_dir($themeDir . '/' . $entry))) {
                 continue;
             }
 
             // set correct name for the default namespace
             $ns = ($entry === 'default') ? FilesystemLoader::MAIN_NAMESPACE : $entry;
-            $themeTemplateDirs[] = [$ns => $themeDir.'/'.$entry];
+            $themeTemplateDirs[] = [$ns => $themeDir . '/' . $entry];
         }
         return $themeTemplateDirs;
     }
@@ -388,13 +398,13 @@ class Template extends Response
     private function getModuleTemplateDir($module)
     {
         if (!Module::isModuleEnabled($module)) {
-            throw new \InvalidArgumentException('The module \''.$module.'\' is not enabled.');
+            throw new \InvalidArgumentException('The module \'' . $module . '\' is not enabled.');
         }
         $moduledir = Module::getModuleDir($module);
         // check if module has a /templates dir, if so, append
-        $templatedir = $moduledir.'/templates';
+        $templatedir = $moduledir . '/templates';
         if (!is_dir($templatedir)) {
-            throw new \InvalidArgumentException('The module \''.$module.'\' has no templates directory.');
+            throw new \InvalidArgumentException('The module \'' . $module . '\' has no templates directory.');
         }
         return $templatedir;
     }
@@ -577,52 +587,52 @@ class Template extends Response
         if ($this->theme['module'] !== null) {
             // .../module/<themeModule>/themes/<themeName>/<templateModule>/<templateName>
 
-            $filename = Module::getModuleDir($this->theme['module']).
-                '/themes/'.$this->theme['name'].'/'.$templateModule.'/'.$templateName;
+            $filename = Module::getModuleDir($this->theme['module']) .
+                '/themes/' . $this->theme['name'] . '/' . $templateModule . '/' . $templateName;
         } elseif ($templateModule !== 'default') {
             // .../module/<templateModule>/templates/<templateName>
-            $filename = Module::getModuleDir($templateModule).'/templates/'.$templateName;
+            $filename = Module::getModuleDir($templateModule) . '/templates/' . $templateName;
         } else {
             // .../templates/<theme>/<templateName>
             $base = $this->configuration->getPathValue('templatedir', 'templates/') ?: 'templates/';
-            $filename = $base.$templateName;
+            $filename = $base . $templateName;
         }
 
         $filename = $this->normalizeTemplateName($filename);
         foreach ($extensions as $extension) {
-            if (file_exists($filename.$extension)) {
-                return $filename.$extension;
+            if (file_exists($filename . $extension)) {
+                return $filename . $extension;
             }
         }
 
         // not found in current theme
         Logger::debug(
-            $_SERVER['PHP_SELF'].' - Template: Could not find template file ['.$template.'] at ['.
-            $filename.'] - now trying the base template'
+            $_SERVER['PHP_SELF'] . ' - Template: Could not find template file [' . $template . '] at [' .
+            $filename . '] - now trying the base template'
         );
 
         // try default theme
         if ($templateModule !== 'default') {
             // .../module/<templateModule>/templates/<templateName>
-            $filename = Module::getModuleDir($templateModule).'/templates/'.$templateName;
+            $filename = Module::getModuleDir($templateModule) . '/templates/' . $templateName;
         } else {
             // .../templates/<templateName>
             $base = $this->configuration->getPathValue('templatedir', 'templates/') ?: 'templates/';
-            $filename = $base.'/'.$templateName;
+            $filename = $base . '/' . $templateName;
         }
 
         $filename = $this->normalizeTemplateName($filename);
         foreach ($extensions as $extension) {
-            if (file_exists($filename.$extension)) {
-                return $filename.$extension;
+            if (file_exists($filename . $extension)) {
+                return $filename . $extension;
             }
         }
 
         // not found in default template
         if ($throw_exception) {
             // log error and throw exception
-            $error = 'Template: Could not find template file ['.$template.'] at ['.$filename.']';
-            Logger::critical($_SERVER['PHP_SELF'].' - '.$error);
+            $error = 'Template: Could not find template file [' . $template . '] at [' . $filename . ']';
+            Logger::critical($_SERVER['PHP_SELF'] . ' - ' . $error);
 
             throw new \Exception($error);
         } else {
@@ -774,6 +784,7 @@ class Template extends Response
      * Includes a file relative to the template base directory.
      * This function can be used to include headers and footers etc.
      *
+     * @deprecated This function will be removed in SSP 2.0. Use Twig-templates instead
      * @param string $file
      * @return void
      */

@@ -20,7 +20,7 @@ class File extends \SimpleSAML\Stats\Output
 
     /**
      * The file handle for the current file.
-     * @var resource|null|false
+     * @var resource|null
      */
     private $file = null;
 
@@ -43,7 +43,7 @@ class File extends \SimpleSAML\Stats\Output
             throw new \Exception('Missing "directory" option for core:File');
         }
         if (!is_dir($logDir)) {
-            throw new \Exception('Could not find log directory: '.var_export($logDir, true));
+            throw new \Exception('Could not find log directory: ' . var_export($logDir, true));
         }
         $this->logDir = $logDir;
     }
@@ -64,15 +64,16 @@ class File extends \SimpleSAML\Stats\Output
             $this->file = null;
         }
 
-        $fileName = $this->logDir.'/'.$date.'.log';
-        $this->file = @fopen($fileName, 'a');
-        if ($this->file === false) {
-            throw new Error\Exception('Error opening log file: '.var_export($fileName, true));
+        $fileName = $this->logDir . '/' . $date . '.log';
+        $fh = @fopen($fileName, 'a');
+        if ($fh === false) {
+            throw new Error\Exception('Error opening log file: ' . var_export($fileName, true));
         }
 
         // Disable output buffering
-        stream_set_write_buffer($this->file, 0);
+        stream_set_write_buffer($fh, 0);
 
+        $this->file = $fh;
         $this->fileDate = $date;
     }
 
@@ -87,14 +88,10 @@ class File extends \SimpleSAML\Stats\Output
     {
         assert(isset($data['time']));
 
-        if ($this->file === false || $this->file === null) {
-            throw new Error\Exception('Error opening log file:  invalid handle');
-        }
-
         $time = $data['time'];
         $milliseconds = (int) (($time - (int) $time) * 1000);
 
-        $timestamp = gmdate('Y-m-d\TH:i:s', $time).sprintf('.%03dZ', $milliseconds);
+        $timestamp = gmdate('Y-m-d\TH:i:s', $time) . sprintf('.%03dZ', $milliseconds);
 
         $outDate = substr($timestamp, 0, 10); // The date-part of the timstamp
 
@@ -102,7 +99,8 @@ class File extends \SimpleSAML\Stats\Output
             $this->openLog($outDate);
         }
 
-        $line = $timestamp.' '.json_encode($data)."\n";
+        $line = $timestamp . ' ' . json_encode($data) . "\n";
+        /** @psalm-suppress PossiblyNullArgument */
         fwrite($this->file, $line);
     }
 }

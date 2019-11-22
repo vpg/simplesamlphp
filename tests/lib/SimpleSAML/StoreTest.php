@@ -3,7 +3,6 @@
 namespace SimpleSAML\Test;
 
 use PHPUnit\Framework\TestCase;
-
 use SimpleSAML\Configuration;
 use SimpleSAML\Error\CriticalConfigurationError;
 use SimpleSAML\Store;
@@ -11,8 +10,8 @@ use SimpleSAML\Store;
 /**
  * Tests for the Store abstract class.
  *
- * For the full copyright and license information, please view the LICENSE file that was distributed with this source
- * code.
+ * For the full copyright and license information, please view the LICENSE file that was
+ * distributed with this source code.
  *
  * @author Sergio Gómez <sergio@uco.es>
  * @package simplesamlphp/simplesamlphp
@@ -26,8 +25,7 @@ class StoreTest extends TestCase
      */
     public function defaultStore()
     {
-        Configuration::loadFromArray([
-        ], '[ARRAY]', 'simplesaml');
+        Configuration::loadFromArray([], '[ARRAY]', 'simplesaml');
 
         /** @var false $store */
         $store = Store::getInstance();
@@ -43,8 +41,7 @@ class StoreTest extends TestCase
      */
     public function phpSessionStore()
     {
-        Configuration::loadFromArray([
-        ], '[ARRAY]', 'simplesaml');
+        Configuration::loadFromArray([], '[ARRAY]', 'simplesaml');
 
         /** @var false $store */
         $store = Store::getInstance();
@@ -66,7 +63,7 @@ class StoreTest extends TestCase
 
         $store = Store::getInstance();
 
-        $this->assertInstanceOf('\SimpleSAML\Store\Memcache', $store);
+        $this->assertInstanceOf(Store\Memcache::class, $store);
     }
 
 
@@ -85,7 +82,7 @@ class StoreTest extends TestCase
 
         $store = Store::getInstance();
 
-        $this->assertInstanceOf('SimpleSAML\Store\SQL', $store);
+        $this->assertInstanceOf(Store\SQL::class, $store);
     }
 
 
@@ -104,7 +101,7 @@ class StoreTest extends TestCase
 
         $store = Store::getInstance();
 
-        $this->assertInstanceOf('SimpleSAML\Store\SQL', $store);
+        $this->assertInstanceOf(Store\SQL::class, $store);
     }
 
 
@@ -135,8 +132,8 @@ class StoreTest extends TestCase
         /** @var \SimpleSAML\Store $store */
         $store = Store::getInstance();
 
-        $this->clearInstance($config, '\SimpleSAML\Configuration');
-        $this->clearInstance($store, '\SimpleSAML\Store');
+        $this->clearInstance($config, Configuration::class);
+        $this->clearInstance($store, Store::class);
     }
 
 

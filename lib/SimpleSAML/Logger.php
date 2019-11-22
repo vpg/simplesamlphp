@@ -2,6 +2,8 @@
 
 namespace SimpleSAML;
 
+use SimpleSAML\Logger\ErrorLogLoggingHandler;
+
 /**
  * The main logger class for SimpleSAMLphp.
  *
@@ -13,9 +15,14 @@ namespace SimpleSAML;
 class Logger
 {
     /**
-     * @var \SimpleSAML\Logger\LoggingHandlerInterface|false|null
+     * @var \SimpleSAML\Logger\LoggingHandlerInterface
      */
-    private static $loggingHandler = null;
+    private static $loggingHandler;
+
+    /**
+     * @var bool
+     */
+    private static $initializing = false;
 
     /**
      * @var integer|null
@@ -316,7 +323,6 @@ class Logger
                 $s = Session::getSessionFromRequest();
             } catch (\Exception $e) {
                 // loading session failed. We don't care why, at this point we have a transient session, so we use that
-                self::error('Cannot load or create session: '.$e->getMessage());
                 $s = Session::getSessionFromRequest();
             }
             self::$trackid = $s->getTrackID();
@@ -403,8 +409,7 @@ class Logger
      */
     private static function createLoggingHandler($handler = null)
     {
-        // set to false to indicate that it is being initialized
-        self::$loggingHandler = false;
+        self::$initializing = true;
 
         // a set of known logging handlers
         $known_handlers = [
@@ -434,16 +439,26 @@ class Logger
             $handler = strtolower($handler);
             if (!array_key_exists($handler, $known_handlers)) {
                 throw new \Exception(
-                    "Invalid value for the 'logging.handler' configuration option. Unknown handler '".$handler."''."
+                    "Invalid value for the 'logging.handler' configuration option. Unknown handler '" . $handler . "'."
                 );
             }
             $handler = $known_handlers[$handler];
         }
-        self::$loggingHandler = new $handler($config);
 
         self::$format = $config->getString('logging.format', self::$format);
-        self::$loggingHandler->setLogFormat(self::$format);
+
+        try {
+            /** @var \SimpleSAML\Logger\LoggingHandlerInterface */
+            self::$loggingHandler = new $handler($config);
+            self::$loggingHandler->setLogFormat(self::$format);
+            self::$initializing = false;
+        } catch (\Exception $e) {
+            self::$loggingHandler = new ErrorLogLoggingHandler($config);
+            self::$initializing = false;
+            self::log(self::CRIT, $e->getMessage(), false);
+        }
     }
+
 
     /**
      * @param int $level
@@ -453,30 +468,29 @@ class Logger
      */
     private static function log($level, $string, $statsLog = false)
     {
-        if (self::$loggingHandler === false) {
+        if (self::$initializing) {
             // some error occurred while initializing logging
             self::defer($level, $string, $statsLog);
             return;
         } elseif (php_sapi_name() === 'cli' || defined('STDIN')) {
             // we are being executed from the CLI, nowhere to log
-            if (is_null(self::$loggingHandler)) {
-                self::createLoggingHandler('SimpleSAML\Logger\StandardErrorLoggingHandler');
+            if (!isset(self::$loggingHandler)) {
+                self::createLoggingHandler(\SimpleSAML\Logger\StandardErrorLoggingHandler::class);
             }
             $_SERVER['REMOTE_ADDR'] = "CLI";
             if (self::$trackid === self::NO_TRACKID) {
-                self::$trackid = 'CL'.bin2hex(openssl_random_pseudo_bytes(4));
+                self::$trackid = 'CL' . bin2hex(openssl_random_pseudo_bytes(4));
             }
-        } elseif (self::$loggingHandler === null) {
+        } elseif (!isset(self::$loggingHandler)) {
             // Initialize logging
             self::createLoggingHandler();
-            self::flush();
         }
 
         if (self::$captureLog) {
             $ts = microtime(true);
             $msecs = (int) (($ts - (int) $ts) * 1000);
-            $ts = gmdate('H:i:s', $ts).sprintf('.%03d', $msecs).'Z';
-            self::$capturedLog[] = $ts.' '.$string;
+            $ts = gmdate('H:i:s', $ts) . sprintf('.%03d', $msecs) . 'Z';
+            self::$capturedLog[] = $ts . ' ' . $string;
         }
 
         if (self::$logLevel >= $level || $statsLog) {

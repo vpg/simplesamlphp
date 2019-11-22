@@ -21,9 +21,9 @@ abstract class SessionHandler
      * instance of the session handler. This variable will be NULL if
      * we haven't instantiated a session handler yet.
      *
-     * @var \SimpleSAML\SessionHandler|null
+     * @var \SimpleSAML\SessionHandler
      */
-    protected static $sessionHandler = null;
+    protected static $sessionHandler;
 
 
     /**
@@ -32,6 +32,8 @@ abstract class SessionHandler
      * to this function.
      *
      * @return \SimpleSAML\SessionHandler The current session handler.
+     *
+     * @throws \Exception If we cannot instantiate the session handler.
      */
     public static function getSessionHandler()
     {
@@ -126,6 +128,8 @@ abstract class SessionHandler
      * PHP session handler.
      *
      * @return void
+     *
+     * @throws \Exception If we cannot instantiate the session handler.
      */
     private static function createSessionHandler()
     {

@@ -56,7 +56,7 @@ class SessionHandlerPHPTest extends ClearStateTestCase
     {
         Configuration::loadFromArray($this->sessionConfig, '[ARRAY]', 'simplesaml');
         $sh = SessionHandlerPHP::getSessionHandler();
-        $this->assertInstanceOf('\SimpleSAML\SessionHandlerPHP', $sh);
+        $this->assertInstanceOf(SessionHandlerPHP::class, $sh);
     }
 
 
@@ -167,9 +167,9 @@ class SessionHandlerPHPTest extends ClearStateTestCase
         $sh->restorePrevious();
 
         $headers = xdebug_get_headers();
-        $this->assertContains('PHPSESSID='.$sid, $headers[0]);
+        $this->assertContains('PHPSESSID=' . $sid, $headers[0]);
         $this->assertContains('SimpleSAML=Restore;', $headers[1]);
-        $this->assertContains('PHPSESSID='.$sid, $headers[2]);
+        $this->assertContains('PHPSESSID=' . $sid, $headers[2]);
         $this->assertEquals($headers[0], $headers[2]);
     }
 
