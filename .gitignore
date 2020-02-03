@@ -5,6 +5,7 @@
 /www/assets/js/*.map
 /www/assets/css/*.css
 /www/assets/css/*.map
+/env.php
 
 !/config/.gitkeep
 !/metadata/.gitkeep
